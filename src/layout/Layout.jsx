@@ -5,7 +5,8 @@ import Navbar from "../shared/Navbar";
 
 const Layout = () => {
     const location = useLocation();
-    const noHeaderFooter = location.pathname.includes('login')
+    // const noHeaderFooter = location.pathname.includes('login') || location.pathname.includes('register')
+    const noHeaderFooter = /login|register/.test(location.pathname);
     return (
         <div>
             {noHeaderFooter || <Navbar></Navbar>}
