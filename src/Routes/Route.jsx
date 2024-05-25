@@ -10,6 +10,7 @@ import Secret from "../components/Secret/Secret";
 import PrivateRoutes from "./PrivateRoutes";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Cart from "../pages/Dashboard/Cart";
+import AllUsers from "../pages/Dashboard/AllUsers/AllUsers";
 
 
 const router = createBrowserRouter([
@@ -46,11 +47,16 @@ const router = createBrowserRouter([
     },
     {
         path: "dashboard",
-        element: <Dashboard></Dashboard>,
+        element: <PrivateRoutes> <Dashboard></Dashboard></PrivateRoutes>,
         children: [
             {
                 path: "cart",
-                element: <Cart></Cart>
+                element: <PrivateRoutes><Cart></Cart></PrivateRoutes>
+            },
+            //admin routes
+            {
+                path: 'users',
+                element: <AllUsers></AllUsers>
             }
         ]
     }

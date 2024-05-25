@@ -1,35 +1,51 @@
 
-import { useContext } from "react";
-
 import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form"
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../providers/AuthProvider";
 import { useNavigate } from "react-router"
 import Swal from "sweetalert2";
+import useAuth from "../../Hooks/useAuth";
+import SocialLogin from "../../components/SocialLogin/SocialLogin";
+import { useAxiosPublic } from "../../Hooks/useAxiosPublic";
+
 
 const Register = () => {
-    const { createUser } = useContext(AuthContext)
-    const { register, handleSubmit, formState: { errors }, } = useForm()
-
+    const axiosPublic = useAxiosPublic();
+    const { createUser, updateUserProfile } = useAuth();
     const navigate = useNavigate();
+    const { register, handleSubmit, reset, formState: { errors }, } = useForm()
     const onSubmit = data => {
         console.log(data)
         createUser(data.email, data.password)
             .then(result => {
-                const user = result.user;
-                console.log(user);
-                Swal.fire({
-                    title: 'Success',
-                    text: 'Do you want to continue',
-                    icon: 'success',
-                    confirmButtonText: 'Cool'
-                })
+                const loggedUser = result.user;
+                console.log(loggedUser);
+                updateUserProfile(data.name, data.photoURL)
+                    .then(() => {
+                        const userInfo = {
+                            name: data.name,
+                            email: data.email
+                        }
 
-                navigate('/login');
+                        axiosPublic.post('/users', userInfo)
+                            .then(res => {
+                                if (res.data) {
+                                    reset();
+                                    navigate('/login')
+                                    Swal.fire({
+                                        title: 'Success',
+                                        text: 'User Created Successfully',
+                                        icon: 'success',
+                                        confirmButtonText: 'Cool'
+                                    })
+
+                                }
+                            })
+
+
+                    }).catch(error => console.log(error))
             })
     }
-
 
 
     return (
@@ -54,11 +70,20 @@ const Register = () => {
                             </div>
                             <div className="form-control">
                                 <label className="label">
+                                    <span className="label-text">Photo URL</span>
+                                </label>
+                                <input type="text" {...register("photoURL", { required: true })} placeholder="Photo URL" className="input input-bordered" />
+                                {errors.photoURL && <span>This field is required</span>}
+                            </div>
+                            <div className="form-control">
+                                <label className="label">
                                     <span className="label-text">Email</span>
                                 </label>
                                 <input type="email" placeholder="email" {...register("email", { required: true })} name="email" className="input input-bordered" />
                                 {errors.email && <span>This field is required</span>}
                             </div>
+
+
                             <div className="form-control">
                                 <label className="label">
                                     <span className="label-text">Password</span>
@@ -81,11 +106,13 @@ const Register = () => {
                                 </label>
                             </div>
 
+
                             <div className="form-control mt-6">
                                 <input className="btn btn-primary" type="submit" value="Register" />
 
                             </div>
                         </form>
+                        <div className='flex felx-row items-center justify-center pb-2'> <SocialLogin></SocialLogin></div>
                         <p className='pb-12 text-center'><small>Already Have An Account? <Link className='text-blue-600 font-medium' to='/login'>Please Login</Link></small> </p>
 
 

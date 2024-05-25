@@ -1,14 +1,17 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
-import { AuthContext } from '../../providers/AuthProvider';
+
 import Swal from 'sweetalert2';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useLocation } from "react-router"
 
+import useAuth from '../../Hooks/useAuth';
+import SocialLogin from '../../components/SocialLogin/SocialLogin';
+
 const Login = () => {
 
-    const { signIn } = useContext(AuthContext);
+    const { signIn } = useAuth();
     const [disabled, setDisabled] = useState(true)
     const location = useLocation();
     const navigate = useNavigate();
@@ -55,6 +58,9 @@ const Login = () => {
             setDisabled(true)
         }
     }
+
+
+
     return (
         <div>
             <Helmet>
@@ -94,7 +100,10 @@ const Login = () => {
                                 {/*todo:  for rechaptha inactive   disabled={disabled} */}
                                 <button disabled={false} className="btn btn-primary">Login</button>
                             </div>
+
+
                         </form>
+                        <div className='flex felx-row items-center justify-center pb-2'> <SocialLogin></SocialLogin></div>
                         <p className='pb-12 text-center'><small>New Here? <Link className='text-blue-600 font-medium' to='/register'>Create An Account</Link></small> </p>
 
 
