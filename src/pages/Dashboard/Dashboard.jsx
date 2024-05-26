@@ -8,7 +8,6 @@ const Dashboard = () => {
     const [cart] = useCart();
     // TODO: get isAdmin value from the database
     const [isAdmin] = useAdmin();
-    console.log(isAdmin);
 
 
     return (
