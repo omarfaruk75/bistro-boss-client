@@ -7,13 +7,15 @@ import { FaBook, FaDollarSign, FaList, FaUsers } from "react-icons/fa";
 const AdminHome = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
-    const { data: stats } = useQuery({
+    const { data: stats = {} } = useQuery({
         queryKey: ['admin-stats'],
         queryFn: async () => {
             const res = await axiosSecure.get('/admin-stats');
+            console.log(res.data);
             return res.data;
         }
     })
+    console.log(stats);
     return (
         <div>
             <h2 className="text-3xl">
