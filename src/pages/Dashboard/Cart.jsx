@@ -44,7 +44,7 @@ const Cart = () => {
         <div>
             <div className="flex justify-around items-center">
                 <h2 className="text-4xl">Items: {cart.length}</h2>
-                <h2 className="text-4xl">Total Price: {totalPrice}</h2>
+                <h2 className="text-4xl">Total Price: {totalPrice.toFixed(2)}</h2>
                 <Link to={'/dashboard/payment'}>
                     <button className="btn btn-primary">Pay</button>
                 </Link>

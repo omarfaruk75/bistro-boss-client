@@ -1,8 +1,10 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import useCart from "../../../Hooks/useCart";
 import useAuth from "../../../Hooks/useAuth";
+import Swal from "sweetalert2";
 
 const CheckoutForm = () => {
     const { user } = useAuth();
@@ -11,9 +13,10 @@ const CheckoutForm = () => {
     const [error, setError] = useState('')
     const [clientSecret, setClientSecret] = useState("");
     const [transactionId, setTransactionId] = useState('');
+    const navigate = useNavigate();
     // console.log(clientSecret);
     const axiosSecure = useAxiosSecure();
-    const [cart] = useCart();
+    const [cart, refetch] = useCart();
     const totalPrice = cart.reduce((total, item) => total + item.price, 0);
 
     useEffect(() => {
@@ -66,8 +69,32 @@ const CheckoutForm = () => {
             console.log('payment-intent', paymentIntent);
             if (paymentIntent.status === "succeeded") {
                 console.log('payment confirmed');
+
             }
             setTransactionId(paymentIntent.id)
+            //now save the payment in the database
+            const payment = {
+                email: user.email,
+                price: totalPrice,
+                transactionId: paymentIntent.id,
+                date: new Date(), //convert to utc date for internation time maintain
+                cartIds: cart.map(item => item._id),
+                menuItemIds: cart.map(item => item.menuID),
+                status: 'pending'
+            }
+            const res = await axiosSecure.post('/payments', payment);
+            console.log("payment saved", res.data);
+            refetch()
+            if (res.data?.paymentsResult?.insertedId) {
+                navigate('/dashboard/paymentHistory')
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Thank You for Your Payment",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
         }
     };
 
