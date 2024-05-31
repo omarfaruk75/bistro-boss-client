@@ -100,7 +100,7 @@ const router = createBrowserRouter([
             {
                 path: 'updateItems/:id',
                 element: <AdminRoutes><UpdateItems></UpdateItems></AdminRoutes>,
-                loader: ({ params }) => fetch(`http://localhost:5000/menu/${params.id}`)
+                loader: ({ params }) => fetch(`https://bistro-boss-server-iota-fawn.vercel.app/menu/${params.id}`)
             }
         ]
     }
