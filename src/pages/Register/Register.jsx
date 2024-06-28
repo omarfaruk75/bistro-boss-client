@@ -24,7 +24,9 @@ const Register = () => {
                     .then(() => {
                         const userInfo = {
                             name: data.name,
-                            email: data.email
+                            email: data.email,
+                            role: "user",
+                            status: "pending"
                         }
 
                         axiosPublic.post('/users', userInfo)
